@@ -1,4 +1,4 @@
-﻿namespace DynamicTokens.BlazorWasm.Authentication;
+﻿namespace DynamicTokens.BlazorWasm.DTOs;
 
 public class LoginRequestDto
 {

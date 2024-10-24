@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DynamicTokens.BlazorWasm.Authentication;
+using DynamicTokens.BlazorWasm.DTOs;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
@@ -25,14 +26,14 @@ public class ApiService
         _jSRuntime = jSRuntime;
     }
 
-    public async Task<UserClaim?> User()
+    public async Task<UserClaimDto?> User()
     {
         var json = await _jSRuntime.InvokeAsync<string?>("localStorage.getItem", "usertoken");
         if (string.IsNullOrEmpty(json)) return null;
-        var userData = JsonSerializer.Deserialize<UserTokens>(json, _jso);
+        var userData = JsonSerializer.Deserialize<UserTokensDto>(json, _jso);
         if (userData is null) return null;
         var base64 = Encoding.UTF8.GetString(Convert.FromBase64String(userData.Claims));
-        var userClaims = JsonSerializer.Deserialize<UserClaim?>(base64, _jso);
+        var userClaims = JsonSerializer.Deserialize<UserClaimDto?>(base64, _jso);
         return userClaims;
     }
 

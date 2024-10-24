@@ -1,29 +1,19 @@
 ﻿@page "/"
 @inject ApiService api
 
-<h1>Hello, world!</h1>
-@if (user is not null)
-{
-    <p>Welcome: <b>@user.Username</b></p>
-}
-
-<br />
-<a href="Weather">Goto Weather Page</a>
-<br/>
-<br />
-<button onclick="Logout">Logout</button>
+<div class="flex-col">
+    <h1>Hello, world!</h1>
+    @if (user is not null)
+    {
+        <p>Welcome: <b>@user.Username</b></p>
+    }
+    <a href="Weather">Goto Weather Page</a>
+    <button onclick="Logout">Logout</button>
+</div>
 
 @code
 {
-    UserClaim? user;
-
-    protected override async Task OnInitializedAsync()
-    {
-        user = await api.User();
-    }
-
-    private async Task Logout()
-    {
-        await api.Logout();
-    }
+    UserClaimDto? user;
+    protected override async Task OnInitializedAsync() => user = await api.User();
+    private async Task Logout() => await api.Logout();
 }

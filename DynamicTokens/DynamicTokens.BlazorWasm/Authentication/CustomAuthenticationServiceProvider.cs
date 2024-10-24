@@ -1,4 +1,5 @@
-﻿using DynamicTokens.BlazorWasm.Services;
+﻿using DynamicTokens.BlazorWasm.DTOs;
+using DynamicTokens.BlazorWasm.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
@@ -9,17 +10,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace DynamicTokens.BlazorWasm.Authentication;
-public class CustomAuthenticationStateProvider : AuthenticationStateProvider
+public class CustomAuthenticationStateProvider(IJSRuntime jSRuntime, NavigationManager navigationManager) : AuthenticationStateProvider
 {
-    private readonly IJSRuntime _jSRuntime;
-    private readonly NavigationManager _navigationManager;
-
-    public CustomAuthenticationStateProvider(IJSRuntime jSRuntime, NavigationManager navigationManager)
-    {
-        _jSRuntime = jSRuntime;
-        _navigationManager = navigationManager;
-    }
-
     private readonly static JsonSerializerOptions _jso = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -34,7 +26,9 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
         var userData = tokens.Split('.');
         var base64 = Encoding.UTF8.GetString(Convert.FromBase64String(userData[0]));
-        var userClaims = JsonSerializer.Deserialize<UserClaim>(base64, _jso);
+        var userClaims = JsonSerializer.Deserialize<UserClaimDto>(base64, _jso);
+        if (userClaims is null) return new AuthenticationState(new ClaimsPrincipal());
+
         var claimsIdentity = new ClaimsIdentity("dynamic-auth");
         claimsIdentity.AddClaim(new(ClaimTypes.Sid, userClaims.Id.ToString()));
         claimsIdentity.AddClaim(new(ClaimTypes.Name, userClaims.Username));
@@ -45,9 +39,9 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     private async ValueTask<string?> CheckToken()
     {
-        var token = await _jSRuntime.InvokeAsync<string?>("localStorage.getItem", "usertoken");
+        var token = await jSRuntime.InvokeAsync<string?>("localStorage.getItem", "usertoken");
         if (token is null || string.IsNullOrEmpty(token)) return null;
-        var userToken = JsonSerializer.Deserialize<UserTokens>(token, _jso);
+        var userToken = JsonSerializer.Deserialize<UserTokensDto>(token, _jso);
         if (userToken is null) return null;
 
         userToken.Tokens.TryPeek(out string? tokenNow);
@@ -58,9 +52,9 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public async ValueTask<string?> GetToken()
     {
-        var token = await _jSRuntime.InvokeAsync<string?>("localStorage.getItem", "usertoken");
+        var token = await jSRuntime.InvokeAsync<string?>("localStorage.getItem", "usertoken");
         if (token is null || string.IsNullOrEmpty(token)) return null;
-        var userToken = JsonSerializer.Deserialize<UserTokens>(token, _jso);
+        var userToken = JsonSerializer.Deserialize<UserTokensDto>(token, _jso);
         if (userToken is null) return null;
 
         userToken.Tokens.TryDequeue(out string? tokenNow);
@@ -70,8 +64,8 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
             userToken = await AttemptRefreshToken(userToken.Claims);
             if (userToken is null)
             {
-                await _jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
-                _navigationManager.NavigateTo(".", true);
+                await jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
+                navigationManager.NavigateTo(".", true);
                 return null;
             }
             userToken.Tokens.TryDequeue(out string? tokenRefreshNow);
@@ -85,26 +79,26 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         }
     }
 
-    private static async Task<UserTokens?> AttemptRefreshToken(string claims)
+    private static async Task<UserTokensDto?> AttemptRefreshToken(string claims)
     {
         var client = new HttpClient();
         client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", claims);
-        var response = await client.PostAsJsonAsync<UserTokens?>($"{ApiService.API_URL}/user/refresh", null);
+        var response = await client.PostAsJsonAsync<UserTokensDto?>($"{ApiService.API_URL}/user/refresh", null);
         if (!response.IsSuccessStatusCode)
         {
             return null;
         }
 
-        var userTokens = await response.Content.ReadFromJsonAsync<UserTokens>();
+        var userTokens = await response.Content.ReadFromJsonAsync<UserTokensDto>();
         return userTokens;
     }
 
-    public async ValueTask SaveToken(UserTokens userTokens)
+    public async ValueTask SaveToken(UserTokensDto userTokens)
     {
         var json = JsonSerializer.Serialize(userTokens, _jso);
-        await _jSRuntime.InvokeVoidAsync("localStorage.setItem", "usertoken", json);
+        await jSRuntime.InvokeVoidAsync("localStorage.setItem", "usertoken", json);
     }
 
     public async ValueTask Logout()
-        => await _jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
+        => await jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
 }

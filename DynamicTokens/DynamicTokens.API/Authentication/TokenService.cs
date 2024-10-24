@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Text;
+using DynamicTokens.API.DTOs;
 
 namespace DynamicTokens.API.Authentication;
 
@@ -16,7 +17,7 @@ public static class TokenService
 
     private readonly static ConcurrentDictionary<string, Queue<string>> _userTokens = [];
 
-    public static (string claims, IEnumerable<string> tokens) GetTokens(UserClaim userClaims, int tokenCount = 25)
+    public static (string claims, IEnumerable<string> tokens) GetTokens(UserClaimDto userClaims, int tokenCount = 25)
     {
         var json = JsonSerializer.Serialize(userClaims, _jso);
         var claims = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));

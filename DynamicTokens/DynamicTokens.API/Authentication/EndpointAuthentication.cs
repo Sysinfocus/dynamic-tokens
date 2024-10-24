@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text;
+using DynamicTokens.API.DTOs;
 
 namespace DynamicTokens.API.Authentication;
 
@@ -20,7 +21,7 @@ public class EndpointAuthentication(string? roles = null) : IEndpointFilter
         if (roles is null) return true;
         var claims = token.Split('.')[0];
         var json = Encoding.UTF8.GetString(Convert.FromBase64String(claims));
-        var userClaim = JsonSerializer.Deserialize<UserClaim>(json, _jso);
+        var userClaim = JsonSerializer.Deserialize<UserClaimDto>(json, _jso);
         var allRoles = roles?.Split(',') ?? [];
         bool final = false;
         foreach (var item in allRoles)
@@ -32,28 +33,5 @@ public class EndpointAuthentication(string? roles = null) : IEndpointFilter
             }
         }
         return final;
-    }
-}
-
-
-public static class EndpointAuthenticationExtensions
-{
-    public static void AddEndpointAuthenticationService(this IServiceCollection service)
-    {
-        service.AddAuthentication().AddBearerToken();
-        service.AddCors();
-        service.AddSingleton<EndpointAuthentication>();
-    }
-
-    public static void UseEndpointAuthentication(this WebApplication app)
-    {
-        app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-
-    }
-
-    public static RouteHandlerBuilder ApplyEndpointAuthentication(this RouteHandlerBuilder builder, string? roles = null)
-    {
-        builder.AddEndpointFilter(new EndpointAuthentication(roles));
-        return builder;
     }
 }

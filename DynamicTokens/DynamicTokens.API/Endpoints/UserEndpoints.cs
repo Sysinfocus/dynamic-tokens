@@ -1,4 +1,5 @@
 ﻿using DynamicTokens.API.Authentication;
+using DynamicTokens.API.DTOs;
 
 namespace DynamicTokens.API.Endpoints;
 
@@ -9,14 +10,14 @@ public class UserEndpoints : IEndpoint
         var group = app.MapGroup("/user").WithTags("Users");
         group.MapPost("/login", UserLogin);
         group.MapPost("/logout", UserLogout).ApplyEndpointAuthentication();
-        group.MapPost("/refresh", UserRefreshTokens).ApplyEndpointAuthentication();
+        group.MapPost("/refresh", UserRefreshTokens);
     }
 
     private IResult UserLogin(LoginRequestDto request)
     {
         if (request.Username.Trim().Length >= 2 && request.Password.Trim().Length >= 4)
         {
-            var userClaim = new UserClaim(Guid.NewGuid(), request.Username, request.Username == "admin" ? "Admin" : "User");
+            var userClaim = new UserClaimDto(Guid.NewGuid(), request.Username, request.Username == "admin" ? "Admin" : "User");
             var (claims, tokens) = TokenService.GetTokens(userClaim);
             return Results.Ok(new
             {

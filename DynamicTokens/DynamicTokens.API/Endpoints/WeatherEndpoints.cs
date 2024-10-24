@@ -1,4 +1,5 @@
 ﻿using DynamicTokens.API.Authentication;
+using DynamicTokens.API.DTOs;
 
 namespace DynamicTokens.API.Endpoints;
 
@@ -25,9 +26,4 @@ internal class WeatherEndpoints : IEndpoint
             .ToArray();
         return forecast;
     }
-}
-
-internal record WeatherForecastDto(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

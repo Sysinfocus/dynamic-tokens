@@ -32,7 +32,7 @@
             }
             else
             {
-                var result = await response.Content.ReadFromJsonAsync<UserTokens>();
+                var result = await response.Content.ReadFromJsonAsync<UserTokensDto>();
                 if (result is null)
                 {
                     message = "Login failed.";

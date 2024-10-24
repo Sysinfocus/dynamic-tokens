@@ -2,60 +2,55 @@
 @attribute [Authorize]
 @inject ApiService api
 
-<h3>Only Authorized</h3>
-
-<p>This page will only work if you are authenticated.</p>
-<br/>
-<a href=".">Goto Homepage</a>
-<br />
-<button @onclick="Logout">Logout</button>
-<br />
-@if (forecasts is not null)
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp C</th>
-                <th>Temp F</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var fc in forecasts)
-            {
+<div class="flex-col">
+    <h3>Only Authorized</h3>
+    <p>This page will only work if you are authenticated.</p>
+    <a href=".">Goto Homepage</a>
+    <button @onclick="Logout">Logout</button>
+    <p>You will see forecasts only if you are in <b>admin</b> role.</p>
+    @if (forecasts is not null && message is null)
+    {
+        <table>
+            <thead>
                 <tr>
-                    <td>@fc.Date</td>
-                    <td>@fc.TemperatureC</td>
-                    <td>@fc.TemperatureF</td>
-                    <td>@fc.Summary</td>
+                    <th>Date</th>
+                    <th>Temp C</th>
+                    <th>Temp F</th>
+                    <th>Summary</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-<br />
-@message
-<br/>
-<button @onclick="GetForecasts">Get Forecasts (User Role)</button>
-<br/>
-<button @onclick="GetForecastsAdmin">Get Forecasts (Admin Role)</button>
-
+            </thead>
+            <tbody>
+                @foreach (var fc in forecasts)
+                {
+                    <tr>
+                        <td>@fc.Date</td>
+                        <td>@fc.TemperatureC</td>
+                        <td>@fc.TemperatureF</td>
+                        <td>@fc.Summary</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <p style="color: red">@message</p>
+    <button @onclick="GetForecasts">Get Forecasts (User Role)</button>
+    <button @onclick="GetForecastsAdmin">Get Forecasts (Admin Role)</button>
+</div>
 
 @code
 {
-    WeatherForecast[]? forecasts;
+    WeatherForecastDto[]? forecasts;
     string? message;
 
     private async Task Logout()
-    {        
+    {
         await api.Logout();
     }
 
     private async Task GetForecasts()
     {
         message = null;
-        var forecastResult = await api.ExecuteAsync<WeatherForecast[]>(
+        var forecastResult = await api.ExecuteAsync<WeatherForecastDto[]>(
             $"{ApiService.API_URL}/weather", HttpMethod.Get);
         if (forecastResult.IsSuccess) forecasts = forecastResult.Value;
         else
@@ -67,18 +62,13 @@
     private async Task GetForecastsAdmin()
     {
         message = null;
-        var forecastResult = await api.ExecuteAsync<WeatherForecast[]>(
+        var forecastResult = await api.ExecuteAsync<WeatherForecastDto[]>(
             $"{ApiService.API_URL}/weather/admin", HttpMethod.Get);
         if (forecastResult.IsSuccess) forecasts = forecastResult.Value;
         else
         {
             message = forecastResult.Message;
         }
-    }
-
-    record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-    {
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
 
 }
