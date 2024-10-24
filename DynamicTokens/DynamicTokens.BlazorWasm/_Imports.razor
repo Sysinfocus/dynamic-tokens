@@ -1,7 +1,17 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using System.Text.Json
+
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.WebAssembly.Http
 @using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+
 @using DynamicTokens.BlazorWasm
+@using DynamicTokens.BlazorWasm.Authentication
+@using DynamicTokens.BlazorWasm.Pages
+@using DynamicTokens.BlazorWasm.Services
+
+@inject ApiService api

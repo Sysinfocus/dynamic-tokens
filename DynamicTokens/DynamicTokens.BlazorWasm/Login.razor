@@ -1,0 +1,53 @@
+@page "/Login"
+@attribute [AllowAnonymous]
+@inject AuthenticationStateProvider asp
+@inject HttpClient httpClient
+@inject NavigationManager nm
+
+<h1>Login</h1>
+
+<p>Username</p>
+<input @bind="@request.Username" />
+<br />
+<p>Password</p>
+<input type="password" @bind="@request.Password" />
+<br />
+<p>@message</p>
+<br />
+<button @onclick="HandleLogin">Login</button>
+
+@code
+{
+    string? message;
+    LoginRequestDto request = new();
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var response = await httpClient.PostAsJsonAsync($"{ApiService.API_URL}/user/login", request);
+            if (!response.IsSuccessStatusCode)
+            {
+                message = "Login failed.";
+            }
+            else
+            {
+                var result = await response.Content.ReadFromJsonAsync<UserTokens>();
+                if (result is null)
+                {
+                    message = "Login failed.";
+                    return;
+                }
+                var casp = (CustomAuthenticationStateProvider)asp;
+                await casp.SaveToken(result);
+                message = result.Claims;
+                if (nm.Uri != "/" && nm.Uri != "")
+                    nm.NavigateTo(nm.Uri, true);
+            }
+        }
+        catch(Exception ex)
+        {
+            message = ex.Message;
+        }
+    }
+}

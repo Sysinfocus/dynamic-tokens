@@ -1,7 +1,17 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <CascadingAuthenticationState>
+            <AuthorizeView>
+                <Authorized>
+                    <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                </Authorized>
+                <NotAuthorized>
+                    <Login />
+                </NotAuthorized>
+            </AuthorizeView>
+        </CascadingAuthenticationState>
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>
