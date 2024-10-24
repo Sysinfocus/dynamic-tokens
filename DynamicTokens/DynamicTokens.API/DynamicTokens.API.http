@@ -1,6 +1,10 @@
 @DynamicTokens.API_HostAddress = http://localhost:5017
 
-GET {{DynamicTokens.API_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{DynamicTokens.API_HostAddress}}/user/login
+Content-Type: application/json
 
+{
+  "username": "admin",
+  "password": "admin123"
+}
 ###
