@@ -4,17 +4,17 @@
 @inject HttpClient httpClient
 @inject NavigationManager nm
 
-<h1>Login</h1>
-
-<p>Username</p>
-<input @bind="@request.Username" />
-<br />
-<p>Password</p>
-<input type="password" @bind="@request.Password" />
-<br />
-<p>@message</p>
-<br />
-<button @onclick="HandleLogin">Login</button>
+<div class="container">
+    <div class="flex-col">
+        <h1>Login</h1>
+        <p>Username</p>
+        <input @bind="@request.Username" />
+        <p>Password</p>
+        <input type="password" @bind="@request.Password" />
+        <p>@message</p>
+        <button @onclick="HandleLogin">Login</button>
+    </div>
+</div>
 
 @code
 {

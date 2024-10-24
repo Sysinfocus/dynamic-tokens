@@ -15,7 +15,7 @@ public static class TokenService
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    private readonly static ConcurrentDictionary<string, Queue<string>> _userTokens = [];
+    private static ConcurrentDictionary<string, Queue<string>> _userTokens = [];
 
     public static (string claims, IEnumerable<string> tokens) GetTokens(UserClaimDto userClaims, int tokenCount = 25)
     {

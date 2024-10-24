@@ -3,11 +3,19 @@
 @inject ApiService api
 
 <div class="flex-col">
+    <h1>Weather</h1>
     <h3>Only Authorized</h3>
     <p>This page will only work if you are authenticated.</p>
-    <a href=".">Goto Homepage</a>
-    <button @onclick="Logout">Logout</button>
+
+    <div class="flex">
+        <a class="link" href=".">Goto Homepage</a>
+        <button @onclick="Logout">Logout</button>
+    </div>
     <p>You will see forecasts only if you are in <b>admin</b> role.</p>
+    <div class="flex">
+        <button @onclick="GetForecasts">Get Forecasts (User Role)</button>
+        <button @onclick="GetForecastsAdmin">Get Forecasts (Admin Role)</button>
+    </div>
     @if (forecasts is not null && message is null)
     {
         <table>
@@ -33,8 +41,6 @@
         </table>
     }
     <p style="color: red">@message</p>
-    <button @onclick="GetForecasts">Get Forecasts (User Role)</button>
-    <button @onclick="GetForecastsAdmin">Get Forecasts (Admin Role)</button>
 </div>
 
 @code
@@ -50,6 +56,7 @@
     private async Task GetForecasts()
     {
         message = null;
+        forecasts = null;
         var forecastResult = await api.ExecuteAsync<WeatherForecastDto[]>(
             $"{ApiService.API_URL}/weather", HttpMethod.Get);
         if (forecastResult.IsSuccess) forecasts = forecastResult.Value;
@@ -62,6 +69,7 @@
     private async Task GetForecastsAdmin()
     {
         message = null;
+        forecasts = null;
         var forecastResult = await api.ExecuteAsync<WeatherForecastDto[]>(
             $"{ApiService.API_URL}/weather/admin", HttpMethod.Get);
         if (forecastResult.IsSuccess) forecasts = forecastResult.Value;

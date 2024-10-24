@@ -7,12 +7,14 @@
 .container {
     max-width: 1400px;
     margin: 1rem auto;
-    padding: 1rem 0;
+    padding: 0 1rem;
 }
 
 html, body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
+
+button, input, textarea, select, option { font-family: inherit; font-size: inherit }
 
 a {
     color: royalblue;
@@ -50,12 +52,17 @@ th, td {
     border: 1px solid #ddd
 }
 
-button {
+input, button, .link {
     padding: 0.5rem 1rem;
     border: 1px solid #999;
     border-radius: 6px;
     background-color: #006;
     color: white
+}
+
+.link:hover, button:hover {
+    text-decoration: none;
+    cursor: pointer;
 }
 
 #blazor-error-ui {
