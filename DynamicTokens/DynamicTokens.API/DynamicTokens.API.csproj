@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DynamicTokens.ServiceDefaults\DynamicTokens.ServiceDefaults.csproj" />
+  </ItemGroup>
+
 </Project>

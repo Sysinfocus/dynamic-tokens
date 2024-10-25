@@ -10,30 +10,24 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 
 namespace DynamicTokens.BlazorWasm.Services;
-public class ApiService
+public class ApiService(
+    AuthenticationStateProvider authState,
+    HttpClient httpClient,
+    NavigationManager navigationManager,
+    IJSRuntime jSRuntime,
+    ILogger<ApiService> logger)
 {
     public static string API_URL = "https://localhost:7100";
-    private readonly CustomAuthenticationStateProvider _authState;
-    private readonly HttpClient _httpClient;
-    private readonly NavigationManager _navigationManager;
-    private readonly IJSRuntime _jSRuntime;
-
-    public ApiService(AuthenticationStateProvider authState, HttpClient httpClient, NavigationManager navigationManager, IJSRuntime jSRuntime)
-    {
-        _authState = (CustomAuthenticationStateProvider)authState;
-        _httpClient = httpClient;
-        _navigationManager = navigationManager;
-        _jSRuntime = jSRuntime;
-    }
-
+    
     public async Task<UserClaimDto?> User()
     {
-        var json = await _jSRuntime.InvokeAsync<string?>("localStorage.getItem", "usertoken");
+        var json = await jSRuntime.InvokeAsync<string?>("localStorage.getItem", "usertoken");
         if (string.IsNullOrEmpty(json)) return null;
         var userData = JsonSerializer.Deserialize<UserTokensDto>(json, _jso);
         if (userData is null) return null;
         var base64 = Encoding.UTF8.GetString(Convert.FromBase64String(userData.Claims));
         var userClaims = JsonSerializer.Deserialize<UserClaimDto?>(base64, _jso);
+        logger.LogInformation($"Info access for user: {userClaims?.Username}.");
         return userClaims;
     }
 
@@ -46,10 +40,14 @@ public class ApiService
 
     private async Task SetAuthentication()
     {
-        _httpClient.DefaultRequestHeaders.Remove("Authorization");
-        var token = await _authState.GetToken();
-        if (string.IsNullOrEmpty(token)) return;
-        _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
+        httpClient.DefaultRequestHeaders.Remove("Authorization");
+        var token = await ((CustomAuthenticationStateProvider)authState).GetToken();
+        if (string.IsNullOrEmpty(token))
+        {
+            logger.LogWarning("No authorization header for this api call.");
+            return;
+        }
+        httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
     }
 
     public async Task<Result<TOutput>> ExecuteAsync<TOutput>(string url, HttpMethod method, object? input = null, bool redirectToLoginIfUnAuthorized = true, CancellationToken cancellationToken = default)
@@ -63,15 +61,17 @@ public class ApiService
         }
         try
         {
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var response = await httpClient.SendAsync(request, cancellationToken);
             if (response.StatusCode == HttpStatusCode.Unauthorized && redirectToLoginIfUnAuthorized)
             {
+                logger.LogWarning($"Unauthorized access, hence redirecting to Login.");
                 await Logout();
                 return Result<TOutput>.Failure(response.StatusCode, null);
             }
             else if (!response.IsSuccessStatusCode)
             {
                 var message = await response.Content.ReadAsStringAsync(cancellationToken);
+                logger.LogWarning($"Api call returned code: {response.StatusCode} with message: {message}.");
                 return Result<TOutput>.Failure(response.StatusCode, message);
             }
             else
@@ -82,6 +82,7 @@ public class ApiService
         }
         catch (Exception ex)
         {
+            logger.LogWarning($"Api call resulted in an exception: {ex.Message}.");
             return Result<TOutput>.Failure(HttpStatusCode.InternalServerError, ex.Message);
         }
     }
@@ -89,9 +90,9 @@ public class ApiService
     public async ValueTask Logout()
     {
         await SetAuthentication();
-        await _httpClient.PostAsync($"{API_URL}/user/logout", null);
-        await _jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
-        _navigationManager.NavigateTo("/", true);
+        await httpClient.PostAsync($"{API_URL}/user/logout", null);
+        await jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
+        navigationManager.NavigateTo("/", true);
     }
 
 }

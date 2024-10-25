@@ -11,7 +11,7 @@
         <a class="link" href=".">Goto Homepage</a>
         <button @onclick="Logout">Logout</button>
     </div>
-    <p>You will see forecasts only if you are in <b>admin</b> role.</p>
+    <p>You will see forecasts only if you are in <b>@user?.Role</b> role.</p>
     <div class="flex">
         <button @onclick="GetForecasts">Get Forecasts (User Role)</button>
         <button @onclick="GetForecastsAdmin">Get Forecasts (Admin Role)</button>
@@ -47,6 +47,13 @@
 {
     WeatherForecastDto[]? forecasts;
     string? message;
+
+    UserClaimDto? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await api.User();
+    }
 
     private async Task Logout()
     {

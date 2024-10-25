@@ -3,6 +3,7 @@
 @inject AuthenticationStateProvider asp
 @inject HttpClient httpClient
 @inject NavigationManager nm
+@inject ILogger<Login> logger
 
 <div class="container">
     <div class="flex-col">
@@ -28,6 +29,7 @@
             var response = await httpClient.PostAsJsonAsync($"{ApiService.API_URL}/user/login", request);
             if (!response.IsSuccessStatusCode)
             {
+                logger.LogWarning($"Login request failed for user: {request.Username}.");
                 message = "Login failed.";
             }
             else
@@ -35,12 +37,13 @@
                 var result = await response.Content.ReadFromJsonAsync<UserTokensDto>();
                 if (result is null)
                 {
+                    logger.LogWarning($"Login request failed for user: {request.Username}.");
                     message = "Login failed.";
                     return;
                 }
-                var casp = (CustomAuthenticationStateProvider)asp;
-                await casp.SaveToken(result);
+                await ((CustomAuthenticationStateProvider)asp).SaveToken(result);
                 message = result.Claims;
+                logger.LogInformation($"Login successful for user: {request.Username}.");
                 if (nm.Uri != "/" && nm.Uri != "")
                     nm.NavigateTo(nm.Uri, true);
             }
@@ -48,6 +51,7 @@
         catch(Exception ex)
         {
             message = ex.Message;
+            logger.LogError($"Login request failed with exception: {ex.Message}.");
         }
     }
 }
