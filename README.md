@@ -2,7 +2,7 @@
 A .NET minimal api and Blazor projects demonstrating the generation and utility of dynamic tokens.
 
 ## Why Dynamic Tokens?
-The primary reason for Dynamic Tokens is to protect the API endpoints as much as possible. Due to the dynamic nature of tokens being presented to the server from the client, it is quite impossible for someone to guess the next token and miss-use it.
+The primary reason for Dynamic Tokens is to protect the API endpoints as much as possible. Due to the dynamic nature of tokens being presented to the server from the client, it is quite impossible for someone to guess the next token and misuse it.
 
 ## How does it work?
 -  The client logs in using their Username/Password as usual.
