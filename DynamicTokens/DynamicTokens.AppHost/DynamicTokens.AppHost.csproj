@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DynamicTokens.API\DynamicTokens.API.csproj" />
+    <ProjectReference Include="..\DynamicTokens.BlazorSSR\DynamicTokens.BlazorSSR.csproj" />
     <ProjectReference Include="..\DynamicTokens.BlazorWasm\DynamicTokens.BlazorWasm.csproj" />
   </ItemGroup>
 

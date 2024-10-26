@@ -1,0 +1,21 @@
+﻿@page "/"
+@inject ApiService api
+
+<div class="flex-col">
+    <h1>Hello, world!</h1>
+    @if (user is not null)
+    {
+        <p>Welcome: <b>@user.Username</b></p>
+    }
+    <div class="flex">
+        <a class="link" href="Weather">Goto Weather Page</a>
+        <button @onclick="Logout">Logout</button>
+    </div>
+</div>
+
+@code
+{
+    UserClaimDto? user;
+    protected override async Task OnInitializedAsync() => user = await api.User();
+    private async Task Logout() => await api.Logout();
+}
