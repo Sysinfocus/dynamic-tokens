@@ -9,7 +9,7 @@ internal class WeatherEndpoints : IEndpoint
 
     public void Register(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/weather").WithTags("Weather");
+        var group = app.MapGroup("/api/weather").WithTags("Weather");
         group.MapGet("/", GetWeatherForecast).ApplyEndpointAuthentication("user");
         group.MapGet("/admin", GetWeatherForecast).ApplyEndpointAuthentication("admin");
     }

@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Text;
 using DynamicTokens.API.DTOs;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace DynamicTokens.API.Authentication;
 
@@ -26,6 +27,7 @@ public class TokenService
         var tokens = new Queue<string>();
         for (int i = 0; i < tokenCount; i++) tokens.Enqueue(Guid.NewGuid().ToString().Split('-')[^1]);
         _userTokens[claims] = tokens;
+        //distributedCache.Set(claims, Encoding.UTF8.GetBytes(string.Join(',', tokens)));
         logger.LogInformation($"{tokenCount} tokens generated for username: {userClaims.Username}.");
         return (claims, tokens);
     }

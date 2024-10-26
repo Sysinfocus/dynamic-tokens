@@ -97,7 +97,7 @@ public class CustomAuthenticationStateProvider(
         var userClaims = JsonSerializer.Deserialize<UserClaimDto>(Convert.FromBase64String(claims), _jso);
         var client = new HttpClient();
         client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", claims);
-        var response = await client.PostAsJsonAsync<UserTokensDto?>($"{ApiService.API_URL}/user/refresh", null);
+        var response = await client.PostAsJsonAsync<UserTokensDto?>($"{ApiService.API_URL}/api/user/refresh", null);
         if (!response.IsSuccessStatusCode)
         {
             logger.LogError($"Refresh token attempt failed for user: {userClaims?.Username}.");

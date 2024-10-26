@@ -89,10 +89,16 @@ public class ApiService(
 
     public async ValueTask Logout()
     {
-        await SetAuthentication();
-        await httpClient.PostAsync($"{API_URL}/user/logout", null);
-        await jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
-        navigationManager.NavigateTo("/", true);
+        try
+        {
+            await SetAuthentication();
+            await httpClient.PostAsync($"{API_URL}/api/user/logout", null);
+        }
+        finally
+        {
+            await jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
+            navigationManager.NavigateTo("/", true);
+        }
     }
 
 }

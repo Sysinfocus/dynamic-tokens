@@ -65,7 +65,7 @@
         message = null;
         forecasts = null;
         var forecastResult = await api.ExecuteAsync<WeatherForecastDto[]>(
-            $"{ApiService.API_URL}/weather", HttpMethod.Get);
+            $"{ApiService.API_URL}/api/weather", HttpMethod.Get);
         if (forecastResult.IsSuccess) forecasts = forecastResult.Value;
         else
         {
@@ -78,7 +78,7 @@
         message = null;
         forecasts = null;
         var forecastResult = await api.ExecuteAsync<WeatherForecastDto[]>(
-            $"{ApiService.API_URL}/weather/admin", HttpMethod.Get);
+            $"{ApiService.API_URL}/api/weather/admin", HttpMethod.Get);
         if (forecastResult.IsSuccess) forecasts = forecastResult.Value;
         else
         {

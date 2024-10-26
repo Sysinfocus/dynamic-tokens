@@ -7,7 +7,7 @@ public class UserEndpoints : IEndpoint
 {
     public void Register(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/user").WithTags("Users");
+        var group = app.MapGroup("/api/user").WithTags("Users");
         group.MapPost("/login", UserLogin);
         group.MapPost("/logout", UserLogout).ApplyEndpointAuthentication();
         group.MapPost("/refresh", UserRefreshTokens);
