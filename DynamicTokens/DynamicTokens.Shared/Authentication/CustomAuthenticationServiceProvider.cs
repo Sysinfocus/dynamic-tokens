@@ -1,7 +1,8 @@
-﻿using DynamicTokens.BlazorWasm.DTOs;
-using DynamicTokens.BlazorWasm.Services;
+﻿using DynamicTokens.Shared.DTOs;
+using DynamicTokens.Shared.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DynamicTokens.BlazorWasm.Authentication;
+namespace DynamicTokens.Shared.Authentication;
 public class CustomAuthenticationStateProvider(
     ILogger<CustomAuthenticationStateProvider> logger,
     IJSRuntime jSRuntime,
@@ -78,7 +79,7 @@ public class CustomAuthenticationStateProvider(
             if (userToken is null)
             {
                 await jSRuntime.InvokeVoidAsync("localStorage.removeItem", "usertoken");
-                navigationManager.NavigateTo(".", true);                
+                navigationManager.NavigateTo(".", true);
                 return null;
             }
             userToken.Tokens.TryDequeue(out string? tokenRefreshNow);

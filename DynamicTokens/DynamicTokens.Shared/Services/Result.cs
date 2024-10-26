@@ -1,4 +1,4 @@
-﻿namespace DynamicTokens.BlazorWasm.Services;
+﻿namespace DynamicTokens.Shared.Services;
 
 using System.Net;
 

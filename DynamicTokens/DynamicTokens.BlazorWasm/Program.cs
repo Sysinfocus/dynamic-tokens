@@ -1,7 +1,6 @@
 using DynamicTokens.BlazorWasm;
-using DynamicTokens.BlazorWasm.Authentication;
-using DynamicTokens.BlazorWasm.DTOs;
-using DynamicTokens.BlazorWasm.Services;
+using DynamicTokens.Shared.Authentication;
+using DynamicTokens.Shared.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

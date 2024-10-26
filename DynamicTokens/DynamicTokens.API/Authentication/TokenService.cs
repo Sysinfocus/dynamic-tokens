@@ -74,6 +74,11 @@ public class TokenService(IMemoryCache cache, ILogger<TokenService> logger) : IT
             return false;
         }
         var tokenBytes = (byte[])cache.Get(values[0])!;
+        if (tokenBytes is null)
+        {
+            logger.LogError($"{nameof(ValidateClaimsToken)} failed due to missing tokens for key: {values[0]}");
+            return false;
+        }
         var tokenArray = Encoding.UTF8.GetString(tokenBytes);
         var tokens = new Queue<string>();
         var tokenData = tokenArray.Split(',');

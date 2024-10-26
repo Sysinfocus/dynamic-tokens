@@ -1,3 +1,3 @@
-﻿namespace DynamicTokens.BlazorWasm.DTOs;
+﻿namespace DynamicTokens.Shared.DTOs;
 
 public record UserClaimDto(Guid Id, string Username, string Role);

@@ -11,7 +11,7 @@
 }
 
 html, body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    font-family: 'Segoe UI', sans-serif;
 }
 
 button, input, textarea, select, option { font-family: inherit; font-size: inherit }

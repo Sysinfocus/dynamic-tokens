@@ -3,13 +3,14 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DynamicTokens.BlazorWasm.Authentication;
-using DynamicTokens.BlazorWasm.DTOs;
+using DynamicTokens.Shared.Authentication;
+using DynamicTokens.Shared.DTOs;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 
-namespace DynamicTokens.BlazorWasm.Services;
+namespace DynamicTokens.Shared.Services;
 public class ApiService(
     AuthenticationStateProvider authState,
     HttpClient httpClient,
@@ -18,7 +19,7 @@ public class ApiService(
     ILogger<ApiService> logger)
 {
     public static string API_URL = "https://localhost:7100";
-    
+
     public async Task<UserClaimDto?> User()
     {
         var json = await jSRuntime.InvokeAsync<string?>("localStorage.getItem", "usertoken");
@@ -100,5 +101,4 @@ public class ApiService(
             navigationManager.NavigateTo("/", true);
         }
     }
-
 }

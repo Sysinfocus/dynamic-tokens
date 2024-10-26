@@ -1,4 +1,4 @@
-﻿namespace DynamicTokens.BlazorWasm.DTOs;
+﻿namespace DynamicTokens.Shared.DTOs;
 
 public class LoginRequestDto
 {
