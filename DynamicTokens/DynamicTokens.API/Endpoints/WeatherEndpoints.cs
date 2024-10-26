@@ -3,15 +3,15 @@ using DynamicTokens.API.DTOs;
 
 namespace DynamicTokens.API.Endpoints;
 
-internal class WeatherEndpoints : IEndpoint
+internal class WeatherEndpoints(ITokenService tokenService) : IEndpoint
 {
     string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
 
     public void Register(IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/weather").WithTags("Weather");
-        group.MapGet("/", GetWeatherForecast).ApplyEndpointAuthentication("user");
-        group.MapGet("/admin", GetWeatherForecast).ApplyEndpointAuthentication("admin");
+        group.MapGet("/", GetWeatherForecast).ApplyEndpointAuthentication(tokenService, "user");
+        group.MapGet("/admin", GetWeatherForecast).ApplyEndpointAuthentication(tokenService, "admin");
     }
 
     private WeatherForecastDto[]? GetWeatherForecast()

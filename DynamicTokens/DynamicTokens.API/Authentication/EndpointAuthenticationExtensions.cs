@@ -4,21 +4,28 @@ public static class EndpointAuthenticationExtensions
 {
     public static void AddEndpointAuthenticationService(this IServiceCollection service)
     {
-        service.AddDistributedMemoryCache();
         service.AddAuthentication().AddBearerToken();
+        service.AddMemoryCache();
+        service.AddSingleton<ITokenService, TokenService>();
+        service.AddSingleton<IEndpointAuthentication, EndpointAuthentication>();
         service.AddCors();
-        service.AddSingleton<EndpointAuthentication>();
     }
 
     public static void UseEndpointAuthentication(this WebApplication app)
     {
-        app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-        TokenService.logger = app.Logger;
+        app.UseCors(o => o
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin()
+        );
     }
 
-    public static RouteHandlerBuilder ApplyEndpointAuthentication(this RouteHandlerBuilder builder, string? roles = null)
-    {        
-        builder.AddEndpointFilter(new EndpointAuthentication(roles));
+    public static RouteHandlerBuilder ApplyEndpointAuthentication(
+        this RouteHandlerBuilder builder,
+        ITokenService tokenService,
+        string? roles = null)
+    {                
+        builder.AddEndpointFilter(new EndpointAuthentication(tokenService, roles));
         return builder;
     }
 }

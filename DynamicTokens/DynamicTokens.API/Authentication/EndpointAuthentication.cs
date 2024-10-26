@@ -4,14 +4,14 @@ using DynamicTokens.API.DTOs;
 
 namespace DynamicTokens.API.Authentication;
 
-public class EndpointAuthentication(string? roles = null) : IEndpointFilter
+public class EndpointAuthentication(ITokenService tokenService, string? roles = null) : IEndpointFilter, IEndpointAuthentication
 {
     private static readonly JsonSerializerOptions _jso = new() { PropertyNameCaseInsensitive = true };
 
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var token = context.HttpContext.Request.Headers.Authorization.ToString();
-        if (!TokenService.ValidateClaimsToken(token)) return Results.Unauthorized();
+        if (!tokenService.ValidateClaimsToken(token)) return Results.Unauthorized();
         if (!IsInRole(token)) return Results.Forbid();
         return await next(context);
     }
