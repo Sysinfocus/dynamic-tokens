@@ -4,6 +4,15 @@ A .NET minimal api and Blazor projects demonstrating the generation and utility 
 ## Why Dynamic Tokens?
 The primary reason for Dynamic Tokens is to protect the API endpoints as much as possible. Due to the dynamic nature of tokens being presented to the server from the client, it is quite impossible for someone to guess the next token and misuse it.
 
+## Solution structure
+-  Aspire hosted application with
+   -  MongoDB NoSQL database (to store the randomly generated weather forecasts)
+   -  Redis Distributed Cache (to store the user claims and tokens)
+-  Minimal API project
+-  Blazor SSR + Interactive Server project
+-  Blazor WebAssembly project
+-  Shared class library project
+
 ## How does it work?
 -  The client logs in using their Username/Password as usual.
 -  The server upon validating the user, provides the claims and 25 random tokens to the client back.
@@ -32,4 +41,4 @@ The primary reason for Dynamic Tokens is to protect the API endpoints as much as
 ---
 
 **Note:**
-The Dynamic Tokens are an expirement to make API calls safer and it is not recommended to use in production in any way.
+The Dynamic Tokens are an experiment to make API calls safer and it is not recommended to use in production in any way.
