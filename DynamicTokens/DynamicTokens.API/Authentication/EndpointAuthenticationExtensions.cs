@@ -5,7 +5,7 @@ public static class EndpointAuthenticationExtensions
     public static void AddEndpointAuthenticationService(this IServiceCollection service)
     {
         service.AddAuthentication().AddBearerToken();
-        service.AddMemoryCache();
+        //service.AddMemoryCache();
         service.AddSingleton<ITokenService, TokenService>();
         service.AddSingleton<IEndpointAuthentication, EndpointAuthentication>();
         service.AddCors();

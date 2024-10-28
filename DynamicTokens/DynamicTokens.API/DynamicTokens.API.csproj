@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.MongoDB.Driver" Version="8.2.2" />
+    <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="8.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DynamicTokens.ServiceDefaults\DynamicTokens.ServiceDefaults.csproj" />
   </ItemGroup>
 

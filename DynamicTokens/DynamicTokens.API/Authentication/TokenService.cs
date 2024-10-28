@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DynamicTokens.API.Authentication;
 
-public class TokenService(IMemoryCache cache, ILogger<TokenService> logger) : ITokenService
+public class TokenService(IDistributedCache cache, ILogger<TokenService> logger) : ITokenService
 {
     private readonly static JsonSerializerOptions _jso = new()
     {

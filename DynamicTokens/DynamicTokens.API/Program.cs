@@ -5,6 +5,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+builder.AddMongoDBClient("dynamic-tokens-mongo-db");
+builder.AddRedisDistributedCache("dynamic-tokens-cache");
+
 builder.Services.AddEndpointAuthenticationService();
 builder.Services.AddMinimalAPIEndpoints();
 
