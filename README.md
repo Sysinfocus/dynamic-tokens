@@ -2,7 +2,7 @@
 A .NET minimal api and Blazor projects demonstrating the generation and utility of dynamic tokens.
 
 ## Why Dynamic Tokens?
-The primary reason for Dynamic Tokens is to protect the API endpoints as much as possible. Due to the dynamic nature of tokens being presented to the server from the client, it is quite impossible for someone to guess the next token and miss-use it.
+The primary reason for Dynamic Tokens is to protect the API endpoints as much as possible. Due to the dynamic nature of tokens being presented to the server from the client, it is quite impossible for someone to guess the next token and misuse it.
 
 ## How does it work?
 -  The client logs in using their Username/Password as usual.
@@ -14,8 +14,8 @@ The primary reason for Dynamic Tokens is to protect the API endpoints as much as
 -  The `Refresh Token` request must be sent on the last token only, else it is deemed as Unauthorized access and the client's authorization is revoked.
 
 ## Benefits over JWT
--  JWT, even with the minimum expiry time, has the chance of miss-use. DT is as good as JWT+Refresh token with lower payloads.
--  JWT miss-use can't be determined hence the challenge for revoking unless reported. DT as it is dynamic, one wrong request, revokes the authorization making it more secure.
+-  JWT, even with the minimum expiry time, has the chance of misuse. DT is as good as JWT+Refresh token with lower payloads.
+-  JWT misuse can't be determined hence the challenge for revoking unless reported. DT as it is dynamic, one wrong request, revokes the authorization making it more secure.
 -  JWT payloads are comparatively larger then DT.
 -  Chances of changing the claims are high in JWT compared to DT as DT is key and one single change will revoke authorization.
 
